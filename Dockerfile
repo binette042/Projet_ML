@@ -1,16 +1,21 @@
-FROM python:3.10-slim
+# Étape 1 : choisir l'image de base
+FROM python:3.11-slim
 
-# Créer un dossier pour l'app
+# Étape 2 : définir le répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Copier les fichiers
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Étape 3 : copier les fichiers de dépendances
+COPY requirements.txt .
 
+# Étape 4 : mettre à jour pip et installer les dépendances
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# Étape 5 : copier le reste du projet
 COPY . .
 
-# Le port utilisé par Render
-EXPOSE 10000
+# Étape 6 : exposer le port de l'application Flask
+EXPOSE 5000
 
-# Lancer l'app avec Gunicorn (remplace app:app si besoin)
-CMD ["gunicorn", "--bind", "0.0.0.0:10000", "app:app"]
+# Étape 7 : commande pour lancer l'application
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
